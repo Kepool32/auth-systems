@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: auth_postgres
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5431:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: auth_server
+    ports:
+      - "${PORT}:${PORT}"
+    env_file:
+      - .env.example
+    depends_on:
+      - postgres
+    command: npm run start:dev
+
+volumes:
+  pgdata:
